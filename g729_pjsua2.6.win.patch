@@ -1,0 +1,269 @@
+diff --git a/pjmedia/build/pjmedia.vcxproj b/pjmedia/build/pjmedia.vcxproj
+index ae674da..c9b85b6 100644
+--- a/pjmedia/build/pjmedia.vcxproj
++++ b/pjmedia/build/pjmedia.vcxproj
+@@ -199,8 +199,9 @@
+   <!-- Override the PlatformToolset -->
+   <PropertyGroup>
+     <PlatformToolset>$(BuildToolset)</PlatformToolset>
+-    <CharacterSet Condition="'$(API_Family)'!='WinDesktop'"></CharacterSet>
+-  </PropertyGroup>  
++    <CharacterSet Condition="'$(API_Family)'!='WinDesktop'">
++    </CharacterSet>
++  </PropertyGroup>
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+   <ImportGroup Label="ExtensionSettings">
+   </ImportGroup>
+@@ -296,7 +297,7 @@
+   </ImportGroup>
+   <PropertyGroup Label="UserMacros" />
+   <PropertyGroup>
+-    <_ProjectFileVersion>14.0.22823.1</_ProjectFileVersion>    
++    <_ProjectFileVersion>14.0.22823.1</_ProjectFileVersion>
+   </PropertyGroup>
+   <!-- Compile and link option definition -->
+   <ItemDefinitionGroup>
+@@ -331,7 +332,7 @@
+   </ItemDefinitionGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+     <ClCompile>
+-      <AdditionalIncludeDirectories>../include;../../pjlib/include;../../pjlib-util/include;../../pjnath/include;../../third_party/portaudio/include;../../third_party/speex/include;../../third_party/build/srtp;../../third_party/srtp/include;../../third_party/srtp/crypto/include;../../third_party/yuv/include;../../third_party/webrtc/src;../..;$(DXSDK_DIR)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>../pjmedia/include;../include;../../pjlib/include;../../pjlib-util/include;../../pjnath/include;../../third_party/portaudio/include;../../third_party/speex/include;../../third_party/build/srtp;../../third_party/srtp/include;../../third_party/srtp/crypto/include;../../third_party/yuv/include;../../third_party/webrtc/src;../..;$(DXSDK_DIR)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PrecompiledHeaderOutputFile />
+     </ClCompile>
+diff --git a/pjmedia/build/pjmedia_codec.vcxproj b/pjmedia/build/pjmedia_codec.vcxproj
+index de4ecd3..205b749 100644
+--- a/pjmedia/build/pjmedia_codec.vcxproj
++++ b/pjmedia/build/pjmedia_codec.vcxproj
+@@ -194,8 +194,9 @@
+   <!-- Override the PlatformToolset -->
+   <PropertyGroup>
+     <PlatformToolset>$(BuildToolset)</PlatformToolset>
+-    <CharacterSet Condition="'$(API_Family)'!='WinDesktop'"></CharacterSet>
+-  </PropertyGroup>  
++    <CharacterSet Condition="'$(API_Family)'!='WinDesktop'">
++    </CharacterSet>
++  </PropertyGroup>
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+   <ImportGroup Label="ExtensionSettings">
+   </ImportGroup>
+@@ -302,7 +303,7 @@
+   </ItemDefinitionGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+     <ClCompile>
+-      <AdditionalIncludeDirectories>../include;../../pjlib/include;../../third_party/speex/include;../../third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>../../third_party/bcg729/include;../include;../../pjlib/include;../../third_party/speex/include;../../third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PrecompiledHeaderOutputFile />
+     </ClCompile>
+@@ -508,6 +509,29 @@
+     </Lib>
+   </ItemDefinitionGroup>
+   <ItemGroup>
++    <ClCompile Include="..\..\third_party\bcg729\src\adaptativeCodebookSearch.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\codebooks.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\computeAdaptativeCodebookGain.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\computeLP.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\computeWeightedSpeech.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\decodeAdaptativeCodeVector.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\decodeFixedCodeVector.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\decodeGains.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\decodeLSP.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\decoder.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\encoder.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\findOpenLoopPitchDelay.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\fixedCodebookSearch.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\gainQuantization.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\interpolateqLSP.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\LP2LSPConversion.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\LPSynthesisFilter.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\LSPQuantization.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\postFilter.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\postProcessing.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\preProcessing.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\qLSP2LP.c" />
++    <ClCompile Include="..\..\third_party\bcg729\src\utils.c" />
+     <ClCompile Include="..\src\pjmedia-codec\amr_sdp_match.c" />
+     <ClCompile Include="..\src\pjmedia-codec\audio_codecs.c" />
+     <ClCompile Include="..\src\pjmedia-codec\ffmpeg_vid_codecs.c" />
+@@ -516,6 +540,7 @@
+     <ClCompile Include="..\src\pjmedia-codec\g7221_sdp_match.c" />
+     <ClCompile Include="..\src\pjmedia-codec\g722\g722_dec.c" />
+     <ClCompile Include="..\src\pjmedia-codec\g722\g722_enc.c" />
++    <ClCompile Include="..\src\pjmedia-codec\g729.c" />
+     <ClCompile Include="..\src\pjmedia-codec\gsm.c" />
+     <ClCompile Include="..\src\pjmedia-codec\h263_packetizer.c" />
+     <ClCompile Include="..\src\pjmedia-codec\h264_packetizer.c" />
+diff --git a/pjmedia/build/pjmedia_codec.vcxproj.filters b/pjmedia/build/pjmedia_codec.vcxproj.filters
+index 9f3a2fb..340bbea 100644
+--- a/pjmedia/build/pjmedia_codec.vcxproj.filters
++++ b/pjmedia/build/pjmedia_codec.vcxproj.filters
+@@ -74,6 +74,78 @@
+     <ClCompile Include="..\src\pjmedia-codec\opus.c">
+       <Filter>Source Files</Filter>
+     </ClCompile>
++    <ClCompile Include="..\src\pjmedia-codec\g729.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\adaptativeCodebookSearch.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\codebooks.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\computeAdaptativeCodebookGain.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\computeLP.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\computeWeightedSpeech.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\decodeAdaptativeCodeVector.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\decodeFixedCodeVector.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\decodeGains.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\decodeLSP.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\decoder.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\encoder.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\findOpenLoopPitchDelay.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\fixedCodebookSearch.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\gainQuantization.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\interpolateqLSP.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\LP2LSPConversion.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\LPSynthesisFilter.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\LSPQuantization.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\postFilter.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\postProcessing.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\preProcessing.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\qLSP2LP.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\third_party\bcg729\src\utils.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
+   </ItemGroup>
+   <ItemGroup>
+     <ClInclude Include="..\src\pjmedia-codec\g722\g722_dec.h">
+diff --git a/pjsip/build/pjsua2_lib.vcxproj b/pjsip/build/pjsua2_lib.vcxproj
+index e591564..0f37470 100644
+--- a/pjsip/build/pjsua2_lib.vcxproj
++++ b/pjsip/build/pjsua2_lib.vcxproj
+@@ -303,7 +303,7 @@
+   </ItemDefinitionGroup>
+   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+     <ClCompile>
+-      <AdditionalIncludeDirectories>../include;../../pjmedia/include;../../pjlib-util/include;../../pjlib/include;../../pjnath/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>../../pjmedia/include;../include;../../pjlib-util/include;../../pjlib/include;../../pjnath/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PrecompiledHeaderOutputFile />
+     </ClCompile>
+diff --git a/third_party/bcg729/include/bcg729/decoder.h b/third_party/bcg729/include/bcg729/decoder.h
+index cae1fa2..b2199d1 100644
+--- a/third_party/bcg729/include/bcg729/decoder.h
++++ b/third_party/bcg729/include/bcg729/decoder.h
+@@ -29,7 +29,10 @@ typedef struct bcg729DecoderChannelContextStruct_struct bcg729DecoderChannelCont
+ /*      - the decoder channel context data                                   */
+ /*                                                                           */
+ /*****************************************************************************/
+-__attribute__ ((visibility ("default"))) bcg729DecoderChannelContextStruct *initBcg729DecoderChannel();
++#ifndef _MSC_VER
++__attribute__ ((visibility ("default")))
++#endif
++bcg729DecoderChannelContextStruct *initBcg729DecoderChannel();
+ 
+ /*****************************************************************************/
+ /* closeBcg729DecoderChannel : free memory of context structure              */
+@@ -37,7 +40,10 @@ __attribute__ ((visibility ("default"))) bcg729DecoderChannelContextStruct *init
+ /*      -(i) decoderChannelContext : the channel context data                */
+ /*                                                                           */
+ /*****************************************************************************/
+-__attribute__ ((visibility ("default"))) void closeBcg729DecoderChannel(bcg729DecoderChannelContextStruct *decoderChannelContext);
++#ifndef _MSC_VER
++__attribute__ ((visibility ("default")))
++#endif
++void closeBcg729DecoderChannel(bcg729DecoderChannelContextStruct *decoderChannelContext);
+ 
+ /*****************************************************************************/
+ /* bcg729Decoder :                                                           */
+@@ -48,5 +54,8 @@ __attribute__ ((visibility ("default"))) void closeBcg729DecoderChannel(bcg729De
+ /*      -(o) signal : a decoded frame 80 samples (16 bits PCM)               */
+ /*                                                                           */
+ /*****************************************************************************/
+-__attribute__ ((visibility ("default"))) void bcg729Decoder(bcg729DecoderChannelContextStruct *decoderChannelContext, uint8_t bitStream[], uint8_t frameErasureFlag, int16_t signal[]);
++#ifndef _MSC_VER
++__attribute__ ((visibility ("default")))
++#endif
++void bcg729Decoder(bcg729DecoderChannelContextStruct *decoderChannelContext, uint8_t bitStream[], uint8_t frameErasureFlag, int16_t signal[]);
+ #endif /* ifndef DECODER_H */
+diff --git a/third_party/bcg729/include/bcg729/encoder.h b/third_party/bcg729/include/bcg729/encoder.h
+index 5967903..55e3b20 100644
+--- a/third_party/bcg729/include/bcg729/encoder.h
++++ b/third_party/bcg729/include/bcg729/encoder.h
+@@ -29,7 +29,10 @@ typedef struct bcg729EncoderChannelContextStruct_struct bcg729EncoderChannelCont
+ /*      - the encoder channel context data                                   */
+ /*                                                                           */
+ /*****************************************************************************/
+-__attribute__ ((visibility ("default"))) bcg729EncoderChannelContextStruct *initBcg729EncoderChannel();
++#ifndef _MSC_VER
++__attribute__ ((visibility ("default")))
++#endif
++bcg729EncoderChannelContextStruct *initBcg729EncoderChannel();
+ 
+ /*****************************************************************************/
+ /* closeBcg729EncoderChannel : free memory of context structure              */
+@@ -37,7 +40,10 @@ __attribute__ ((visibility ("default"))) bcg729EncoderChannelContextStruct *init
+ /*      -(i) encoderChannelContext : the channel context data                */
+ /*                                                                           */
+ /*****************************************************************************/
+-__attribute__ ((visibility ("default"))) void closeBcg729EncoderChannel(bcg729EncoderChannelContextStruct *encoderChannelContext);
++#ifndef _MSC_VER
++__attribute__ ((visibility ("default")))
++#endif
++void closeBcg729EncoderChannel(bcg729EncoderChannelContextStruct *encoderChannelContext);
+ 
+ /*****************************************************************************/
+ /* bcg729Encoder :                                                           */
+@@ -48,5 +54,8 @@ __attribute__ ((visibility ("default"))) void closeBcg729EncoderChannel(bcg729En
+ /*           on 80 bits (5 16bits words)                                     */
+ /*                                                                           */
+ /*****************************************************************************/
+-__attribute__ ((visibility ("default"))) void bcg729Encoder(bcg729EncoderChannelContextStruct *encoderChannelContext, int16_t inputFrame[], uint8_t bitStream[]);
++#ifndef _MSC_VER
++__attribute__ ((visibility ("default")))
++#endif
++void bcg729Encoder(bcg729EncoderChannelContextStruct *encoderChannelContext, int16_t inputFrame[], uint8_t bitStream[]);
+ #endif /* ifndef ENCODER_H */
