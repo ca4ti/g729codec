@@ -1,0 +1,13 @@
+diff --git a/pjsip/src/pjsip/sip_transport.c b/pjsip/src/pjsip/sip_transport.c
+index f4e6bbe..c609896 100644
+--- a/pjsip/src/pjsip/sip_transport.c
++++ b/pjsip/src/pjsip/sip_transport.c
+@@ -1256,7 +1256,7 @@ PJ_DEF(pj_status_t) pjsip_tpmgr_register_tpfactory( pjsip_tpmgr *mgr,
+     /* Check that no factory with the same type has been registered. */
+     status = PJ_SUCCESS;
+     for (p=mgr->factory_list.next; p!=&mgr->factory_list; p=p->next) {
+-	if (p->type == tpf->type) {
++	if (p->type == tpf->type && pj_sockaddr_cmp(&p->local_addr, &tpf->local_addr) == 0) {
+ 	    status = PJSIP_ETYPEEXISTS;
+ 	    break;
+ 	}
