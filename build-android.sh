@@ -4,7 +4,7 @@ make clean && make distclean
 rm -rf ../build-android/*
 
 #patch -p1 < g729_pjsua2.6.patch
-./configure-android --prefix /Users/bogdan/projects/pjsip_custom/build-android
+APP_PLATFORM=android-19 ./configure-android --prefix /Users/bogdan/projects/pjsip_custom/build-android
 
 cp pjlib/include/pj/config_site_sample.h pjlib/include/pj/config_site.h
 awk -v "n=22" -v "s=#define PJ_CONFIG_ANDROID 1" '(NR==n) { print s } 1' pjlib/include/pj/config_site.h > pjlib/include/pj/config_site.h.tmp
