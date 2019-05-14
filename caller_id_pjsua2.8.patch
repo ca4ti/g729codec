@@ -1,0 +1,221 @@
+diff --git a/pjsip/src/pjsip-ua/sip_inv.c b/pjsip/src/pjsip-ua/sip_inv.c
+index 02e256a..f39e9bd 100644
+--- a/pjsip/src/pjsip-ua/sip_inv.c
++++ b/pjsip/src/pjsip-ua/sip_inv.c
+@@ -3178,6 +3178,87 @@ PJ_DEF(pj_status_t) pjsip_inv_create_ack(pjsip_inv_session *inv,
+     return PJ_SUCCESS;
+ }
+ 
++/* BEGIN BC */
++static char *escape_quoted(const char *string, char *outbuf, int buflen)
++{
++    const char *ptr  = string;
++    char *out = outbuf;
++    char *allow = "\t\v !"; /* allow LWS (minus \r and \n) and "!" */
++
++    while (*ptr && out - outbuf < buflen - 1) {
++        if (!(strchr(allow, *ptr))
++            && !(*ptr >= '#' && *ptr <= '[') /* %x23 - %x5b */
++            && !(*ptr >= ']' && *ptr <= '~') /* %x5d - %x7e */
++            && !((unsigned char) *ptr > 0x7f)) {             /* UTF8-nonascii */
++
++            if (out - outbuf >= buflen - 2) {
++                break;
++            }
++            out += sprintf(out, "\\%c", (unsigned char) *ptr);
++        } else {
++            *out = *ptr;
++            out++;
++        }
++        ptr++;
++    }
++
++    if (buflen) {
++        *out = '\0';
++    }
++
++    return outbuf;
++}
++static void modify_id_header(pj_pool_t *pool, pjsip_fromto_hdr *id_hdr, const char *cid)
++{
++    pjsip_name_addr *id_name_addr;
++    pjsip_sip_uri *id_uri;
++
++    id_name_addr = (pjsip_name_addr *) id_hdr->uri;
++    id_uri = pjsip_uri_get_uri(id_name_addr->uri);
++
++    /* if (id->name.valid) { */
++    int name_buf_len = strlen(cid) * 2 + 1;
++    char *name_buf = __builtin_alloca(name_buf_len);
++    escape_quoted(cid, name_buf, name_buf_len);
++    pj_strdup2(pool, &id_name_addr->display, name_buf);
++
++    /* if (id->number.valid) { */
++    pj_strdup2(pool, &id_uri->user, cid);
++}
++static void caller_id_outgoing_request(pjsip_tx_data *tdata)
++{
++    static const pj_str_t STR_ASSERTED_ID = { "P-Asserted-Identity", 19 };
++    static const pj_size_t caller_id_len = 1024;
++    char caller_id[caller_id_len];
++
++    /* get P-Asserted-Identity header */
++    pjsip_generic_string_hdr *hdr = pjsip_msg_find_hdr_by_name(tdata->msg, &STR_ASSERTED_ID, tdata->msg->hdr.next);
++    if (NULL != hdr) {
++        pjsip_fromto_hdr *from = pjsip_msg_find_hdr(tdata->msg, PJSIP_H_FROM, tdata->msg->hdr.next);
++        if (NULL != from) {
++            pj_size_t len = pj_strlen(&hdr->hvalue);
++            if (4 < len) {
++                /* set CID only if it is not empty. CID should have the format 'sip:<CID>@<domain>' */
++                int index = 0;
++                const char *str_buf = pj_strbuf(&hdr->hvalue);
++                while ((index < (caller_id_len-1)) && ('@' != str_buf[4+index]) && ((4+index) < len)) {
++                    caller_id[index] = str_buf[4+index];
++                    ++index;
++                }
++                caller_id[index] = '\0';
++                modify_id_header(tdata->pool, from, caller_id);
++            }
++        }
++    }
++}
++static void handle_outgoing(pjsip_tx_data *tdata)
++{
++    if (tdata->msg->type == PJSIP_REQUEST_MSG) {
++        caller_id_outgoing_request(tdata);
++    }
++}
++/* END BC */
++
+ /*
+  * Send a request or response message.
+  */
+@@ -3194,6 +3275,8 @@ PJ_DEF(pj_status_t) pjsip_inv_send_msg( pjsip_inv_session *inv,
+     PJ_LOG(5,(inv->obj_name, "Sending %s", 
+ 	      pjsip_tx_data_get_info(tdata)));
+ 
++    handle_outgoing(tdata);
++
+     if (tdata->msg->type == PJSIP_REQUEST_MSG) {
+ 	struct tsx_inv_data *tsx_inv_data;
+ 
+diff --git a/pjsip/src/pjsua-lib/pjsua_call.c b/pjsip/src/pjsua-lib/pjsua_call.c
+index 68bccea..95956bd 100644
+--- a/pjsip/src/pjsua-lib/pjsua_call.c
++++ b/pjsip/src/pjsua-lib/pjsua_call.c
+@@ -3866,6 +3866,86 @@ static pj_status_t process_pending_reinvite(pjsua_call *call)
+     return PJ_SUCCESS;
+ }
+ 
++/* BEGIN BC */
++static char *escape_quoted(const char *string, char *outbuf, int buflen)
++{
++    const char *ptr  = string;
++    char *out = outbuf;
++    char *allow = "\t\v !"; /* allow LWS (minus \r and \n) and "!" */
++
++    while (*ptr && out - outbuf < buflen - 1) {
++        if (!(strchr(allow, *ptr))
++            && !(*ptr >= '#' && *ptr <= '[') /* %x23 - %x5b */
++            && !(*ptr >= ']' && *ptr <= '~') /* %x5d - %x7e */
++            && !((unsigned char) *ptr > 0x7f)) {             /* UTF8-nonascii */
++
++            if (out - outbuf >= buflen - 2) {
++                break;
++            }
++            out += sprintf(out, "\\%c", (unsigned char) *ptr);
++        } else {
++            *out = *ptr;
++            out++;
++        }
++        ptr++;
++    }
++
++    if (buflen) {
++        *out = '\0';
++    }
++
++    return outbuf;
++}
++static void modify_id_header(pj_pool_t *pool, pjsip_fromto_hdr *id_hdr, const char *cid)
++{
++    pjsip_name_addr *id_name_addr;
++    pjsip_sip_uri *id_uri;
++
++    id_name_addr = (pjsip_name_addr *) id_hdr->uri;
++    id_uri = pjsip_uri_get_uri(id_name_addr->uri);
++
++    /* if (id->name.valid) { */
++    int name_buf_len = strlen(cid) * 2 + 1;
++    char *name_buf = __builtin_alloca(name_buf_len);
++    escape_quoted(cid, name_buf, name_buf_len);
++    pj_strdup2(pool, &id_name_addr->display, name_buf);
++
++    /* if (id->number.valid) { */
++    pj_strdup2(pool, &id_uri->user, cid);
++}
++static void caller_id_outgoing_request(pjsip_tx_data *tdata, pjsip_dialog *dlg)
++{
++    static const pj_str_t STR_ASSERTED_ID = { "P-Asserted-Identity", 19 };
++    static const pj_size_t caller_id_len = 1024;
++    char caller_id[caller_id_len];
++
++    /* get P-Asserted-Identity header */
++    pjsip_generic_string_hdr *hdr = pjsip_msg_find_hdr_by_name(tdata->msg, &STR_ASSERTED_ID, tdata->msg->hdr.next);
++    if (NULL != hdr) {
++        pjsip_fromto_hdr *from = pjsip_msg_find_hdr(tdata->msg, PJSIP_H_FROM, tdata->msg->hdr.next);
++        if (NULL != from) {
++            pj_size_t len = pj_strlen(&hdr->hvalue);
++            if (4 < len) {
++                /* set CID only if it is not empty. CID should have the format 'sip:<CID>@<domain>' */
++                int index = 0;
++                const char *str_buf = pj_strbuf(&hdr->hvalue);
++                while ((index < (caller_id_len-1)) && ('@' != str_buf[4+index]) && ((4+index) < len)) {
++                    caller_id[index] = str_buf[4+index];
++                    ++index;
++                }
++                caller_id[index] = '\0';
++                modify_id_header(tdata->pool, dlg->local.info, caller_id);
++            }
++        }
++    }
++}
++static void handle_outgoing(pjsip_tx_data *tdata, pjsip_dialog *dlg)
++{
++    if (tdata->msg->type == PJSIP_REQUEST_MSG) {
++        caller_id_outgoing_request(tdata, dlg);
++    }
++}
++/* END BC */
+ 
+ /*
+  * This callback receives notification from invite session when the
+@@ -4033,6 +4113,15 @@ static void pjsua_call_on_state_changed(pjsip_inv_session *inv,
+     for (;num_locks > 0; num_locks--)
+     	PJSUA_LOCK();
+ 
++    /* Only change the From header on the initial outbound INVITE. Switching it
++     * mid-call might confuse some UAs.
++     */
++     /* BEGIN BC */
++    if ((inv->state < PJSIP_INV_STATE_CONFIRMED) && (NULL != e) && (PJSIP_EVENT_TX_MSG == e->type)) {
++        handle_outgoing(e->body.tx_msg.tdata, inv->dlg);
++    }
++    /* END BC */
++
+     /* call->inv may be NULL now */
+ 
+     /* Destroy media session when invite session is disconnected. */
+@@ -5396,6 +5485,12 @@ static void pjsua_call_on_tsx_state_changed(pjsip_inv_session *inv,
+ 	}
+     }
+ 
++    /* BEGIN BC */
++    if (PJSIP_EVENT_TX_MSG == e->body.tsx_state.type) {
++        handle_outgoing(e->body.tsx_state.src.tdata, inv->dlg);
++    }
++    /* END BC */
++
+ on_return:
+     pj_log_pop_indent();
+ }
